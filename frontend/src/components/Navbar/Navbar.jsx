@@ -3,14 +3,32 @@ import './Navbar.css'
 import { assets } from '../../assets/assets'
 import { Link } from 'react-router-dom';
 import { StoreContext } from '../../Context/StoreContext';
+import LoginPopup from '../LoginPopup/LoginPopup';
 
-const Navbar = ({setShowLogin}) => {
+const Navbar = () => {
 
   const [menu,setMenu] = useState("Home");
 
   const {getTotalCartAmount} = useContext(StoreContext);
 
+  const[showLogin,setShowLogin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const toggleLogin = () => {
+    setShowLogin(!showLogin);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setShowLogin(false);
+  };
+
   return (
+    <nav>
     <div className='navbar'>
       <Link to='/'><img src={assets.logo} alt="" className="logo" /></Link>
       <ul className="navbar-menu">
@@ -25,9 +43,17 @@ const Navbar = ({setShowLogin}) => {
           <Link to='/cart'><img src={assets.basket_icon} alt="" /></Link>
           <div className={getTotalCartAmount()===0 ?"":"dot"}></div>
         </div>
-        <button onClick={()=>setShowLogin(true)}>Sign In</button>
+        {isLoggedIn ? (
+            <button onClick={handleLogout}>Logout</button>
+          ) : (
+            <button onClick={toggleLogin}>Sign In</button>
+          )}
+        {/* <button onClick={toggleLogin}>{showLogin ? "Logout" : "Sign In"}</button> */}
       </div>
     </div>
+    {showLogin && <LoginPopup setShowLogin={setShowLogin} handleLogin={handleLogin} />}
+    </nav>
+    
   )
 }
 
